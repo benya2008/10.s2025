@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reakcióidő Teszt</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            text-align: center;
+            background-color: black;
+            color: white;
+        }
+        .game-container {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .screen {
+            width: 80vw;
+            height: 50vh;
+            border-radius: 20px;
+            background-color: red;
+            transition: background-color 0.2s ease;
+        }
+        .info {
+            margin-top: 20px;
+            font-size: 1.5rem;
+        }
+        .best-time {
+            margin-top: 10px;
+            font-size: 1.2rem;
+            color: yellow;
+        }
+        .reset-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            background: #ff5722;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .reset-btn:hover {
+            background: #e64a19;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="screen" id="screen"></div>
+        <div class="info" id="info">Várj, amíg a szín zöldre vált, majd nyomd meg a SPACE-t!</div>
+        <div class="best-time" id="bestTime">Legjobb időd: - ms</div>
+        <button class="reset-btn" onclick="resetGame()">Újrakezdés</button>
+    </div>
+
+    <script>
+        let startTime, reactionTime;
+        let bestTime = Infinity;
+        let timeout;
+        const screen = document.getElementById("screen");
+        const info = document.getElementById("info");
+        const bestTimeDisplay = document.getElementById("bestTime");
+
+        function startGame() {
+            info.innerText = "Figyelj! Bármikor vált!";
+            timeout = setTimeout(() => {
+                screen.style.backgroundColor = "green";
+                startTime = Date.now();
+            }, Math.random() * 3000 + 2000);
+        }
+
+        document.addEventListener("keydown", (event) => {
+            if (event.code === "Space") {
+                if (screen.style.backgroundColor === "green") {
+                    reactionTime = Date.now() - startTime;
+                    info.innerText = `Reakcióidőd: ${reactionTime} ms`;
+                    if (reactionTime < bestTime) {
+                        bestTime = reactionTime;
+                        bestTimeDisplay.innerText = `Legjobb időd: ${bestTime} ms`;
+                    }
+                    screen.style.backgroundColor = "red";
+                    clearTimeout(timeout);
+                } else {
+                    info.innerText = "Túl hamar nyomtál! Próbáld újra!";
+                    clearTimeout(timeout);
+                    screen.style.backgroundColor = "red";
+                }
+            }
+        });
+
+        function resetGame() {
+            screen.style.backgroundColor = "red";
+            info.innerText = "Várj, amíg a szín zöldre vált, majd nyomd meg a SPACE-t!";
+            clearTimeout(timeout);
+            setTimeout(startGame, 1000);
+        }
+
+        startGame();
+    </script>
+</body>
+</html>
